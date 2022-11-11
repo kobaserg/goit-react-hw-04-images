@@ -9,7 +9,7 @@ const URL = 'https://pixabay.com/api/?';
 const API_KEY = '29969800-031613b21cddc77cf547ed849';
 
 export function ImageGallery(props) {
-  const [galleryImage, setGalleryImage] = useState([]);
+  const [galleryImages, setGalleryImage] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalHits, setTotalHits] = useState(0);
 
@@ -43,9 +43,10 @@ export function ImageGallery(props) {
           setLoading(false);
         });
     } else setGalleryImage([]);
+    // eslint-disable-next-line
   }, [page, galleryName]);
 
-  if (galleryImage.length === totalHits && page > 1) {
+  if (galleryImages.length === totalHits && page > 1) {
     onBtnLoadMore(false);
   }
 
@@ -53,13 +54,11 @@ export function ImageGallery(props) {
     urlLargeImage(urlLargImage);
   };
 
-  const images = galleryImage;
-
   return (
     <div>
       <Gallery>
-        {images &&
-          images.map(image => {
+        {galleryImages &&
+          galleryImages.map(image => {
             return (
               <div key={image.id}>
                 <ImageGalleryItem
