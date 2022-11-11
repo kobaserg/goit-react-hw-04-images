@@ -16,6 +16,7 @@ export function ImageGallery(props) {
   const { galleryName, page, per_page, onBtnLoadMore, urlLargeImage } = props;
 
   useEffect(() => {
+    if (page === 1) setGalleryImage([]);
     if (galleryName !== '') {
       setLoading(true);
       fetch(
