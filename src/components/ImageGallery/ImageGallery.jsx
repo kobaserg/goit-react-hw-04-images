@@ -13,7 +13,7 @@ export function ImageGallery(props) {
   const [loading, setLoading] = useState(false);
   const [totalHits, setTotalHits] = useState(0);
 
-  const { galleryName, page, per_page, onBtnLoadMore, urlLargeImage } = props;
+  const { galleryName, page, onBtnLoadMore, urlLargeImage } = props;
 
   useEffect(() => {
     if (page === 1) setGalleryImage([]);
@@ -22,7 +22,7 @@ export function ImageGallery(props) {
       fetch(
         `${URL}key=${API_KEY}&q=${galleryName}
         &image_type=photo&orientation=horizontal
-        &per_page=${per_page}
+        &per_page=${12}
         &page=${page}`
       )
         .then(responce => responce.json())
@@ -44,8 +44,7 @@ export function ImageGallery(props) {
           setLoading(false);
         });
     } else setGalleryImage([]);
-    // eslint-disable-next-line
-  }, [page, galleryName]);
+  }, [page, galleryName, onBtnLoadMore]);
 
   if (galleryImages.length === totalHits && page > 1) {
     onBtnLoadMore(false);
@@ -80,3 +79,5 @@ export function ImageGallery(props) {
 ImageGallery.propTypes = {
   props: PropTypes.object,
 };
+
+// eslint-disable-next-line
