@@ -17,7 +17,6 @@ export function ImageGallery({
 }) {
   const [galleryImage, setGalleryImage] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [totalHits, setTotalHits] = useState(0);
 
   useEffect(() => {
@@ -43,7 +42,7 @@ export function ImageGallery({
 
           setTotalHits(gallery.totalHits);
         })
-        .catch(error => setError(true))
+        .catch(error => console.log('ERROR'))
         .finally(() => {
           setLoading(false);
         });
