@@ -38,7 +38,7 @@ export function ImageGallery(props) {
 
           setTotalHits(gallery.totalHits);
         })
-        .catch(error => console.log('ERROR'))
+        .catch(error => console.log('ERROR---ERROR'))
         .finally(() => {
           setLoading(false);
         });
