@@ -8,16 +8,12 @@ import { Gallery } from './ImageGallery.styled';
 const URL = 'https://pixabay.com/api/?';
 const API_KEY = '29969800-031613b21cddc77cf547ed849';
 
-export function ImageGallery({
-  galleryName,
-  page,
-  per_page,
-  onBtnLoadMore,
-  urlLargeImage,
-}) {
+export function ImageGallery(props) {
   const [galleryImage, setGalleryImage] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalHits, setTotalHits] = useState(0);
+
+  const { galleryName, page, per_page, onBtnLoadMore, urlLargeImage } = props;
 
   useEffect(() => {
     if (galleryName !== '') {
