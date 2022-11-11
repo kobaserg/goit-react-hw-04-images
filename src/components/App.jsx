@@ -1,82 +1,60 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Modal } from './Modal/Modal';
 import { Button } from './Button/Button';
 
-export class App extends React.Component {
-  state = {
-    searchGallery: '',
-    page: 1,
-    per_page: 12,
-    onModal: false,
-    onVisibleBtnLoadMore: false,
-    urlLargeImage: '',
-    submitSearch: true,
-  };
+export function App() {
+  const [searchGallery, setSearchGallery] = useState('');
+  const [page, setPage] = useState(1);
+  const [per_page, setPer_page] = useState(12);
+  const [onModal, setOnModal] = useState(false);
+  const [visibleBtnLoadMore, setVisibleBtnLoadMore] = useState(false);
+  const [urlLargeImage, setUrlLargeImage] = useState('');
 
-  componentDidMount() {
+  useEffect(() => {
     window.addEventListener('keydown', event => {
-      if (event.code === 'Escape') this.setState({ onModal: false });
+      if (event.code === 'Escape') setOnModal(false);
     });
-  }
+  }, [onModal]);
 
-  handleFormSubmit = searchGallery => {
-    this.setState({
-      searchGallery,
-      onVisibleBtnLoadMore: false,
-      page: 1,
-      submitSearch: true,
-    });
+  const handleFormSubmit = searchGallery => {
+    setSearchGallery(searchGallery);
+    setPage(1);
   };
 
-  handleModal = urlLargeImg => {
-    this.setState({
-      onModal: true,
-      urlLargeImage: urlLargeImg,
-    });
+  const handleModal = urlLargeImg => {
+    setOnModal(true);
+    setUrlLargeImage(urlLargeImg);
   };
 
-  isCloseModal = () => {
-    this.setState({ onModal: false });
+  const isCloseModal = () => {
+    setOnModal(false);
     window.removeEventListener('keydown', event => {
-      if (event.code === 'Escape') this.setState({ onModal: false });
+      if (event.code === 'Escape') setOnModal(false);
     });
   };
 
-  visibleBtnLoadMore = btnLM => {
-    this.setState({ onVisibleBtnLoadMore: btnLM });
+  const btnLoadMore = btnLM => {
+    setVisibleBtnLoadMore(btnLM);
   };
 
-  onClickLoadMore = () => {
-    this.setState(prevState => ({
-      page: prevState.page + 1,
-      submitSearch: false,
-    }));
+  const onClickLoadMore = () => {
+    setPage(page => page + 1);
   };
-  render() {
-    return (
-      <div>
-        <Searchbar onSearchGallery={this.handleFormSubmit} />
-        <ImageGallery
-          galleryName={this.state.searchGallery}
-          page={this.state.page}
-          per_page={this.state.per_page}
-          onSubmitForm={this.state.submitSearch}
-          onModal={this.handleModal}
-          onBtnLoadMore={this.visibleBtnLoadMore}
-          urlLargeImage={this.handleModal}
-        />
-        {this.state.onModal && (
-          <Modal
-            urlModal={this.state.urlLargeImage}
-            closeModal={this.isCloseModal}
-          />
-        )}
-        {this.state.onVisibleBtnLoadMore && (
-          <Button onBtnLM={this.onClickLoadMore} />
-        )}
-      </div>
-    );
-  }
+
+  return (
+    <div>
+      <Searchbar onSearchGallery={handleFormSubmit} />
+      <ImageGallery
+        galleryName={searchGallery}
+        page={page}
+        per_page={per_page}
+        onBtnLoadMore={btnLoadMore}
+        urlLargeImage={handleModal}
+      />
+      {onModal && <Modal urlModal={urlLargeImage} closeModal={isCloseModal} />}
+      {visibleBtnLoadMore && <Button onBtnLM={onClickLoadMore} />}
+    </div>
+  );
 }

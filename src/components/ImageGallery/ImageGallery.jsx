@@ -1,93 +1,85 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
 import { Loader } from '../Loader/Loader';
 import Notiflix from 'notiflix';
-
 import { Gallery } from './ImageGallery.styled';
 
 const URL = 'https://pixabay.com/api/?';
 const API_KEY = '29969800-031613b21cddc77cf547ed849';
 
-export class ImageGallery extends React.Component {
-  state = {
-    galleryImage: [],
-    loading: false,
-    error: null,
-    totalHits: 0,
-  };
+export function ImageGallery({
+  galleryName,
+  page,
+  per_page,
+  onBtnLoadMore,
+  urlLargeImage,
+}) {
+  const [galleryImage, setGalleryImage] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [totalHits, setTotalHits] = useState(0);
 
-  componentDidUpdate(prevProps, prevState) {
-    if (
-      prevProps.galleryName !== this.props.galleryName ||
-      prevProps.page !== this.props.page
-    ) {
-      this.setState({
-        loading: true,
-      });
-
-      if (this.props.onSubmitForm) {
-        this.setState({ galleryImage: [] });
-      }
-
+  useEffect(() => {
+    if (galleryName !== '') {
+      setLoading(true);
       fetch(
-        `${URL}key=${API_KEY}&q=${this.props.galleryName}
+        `${URL}key=${API_KEY}&q=${galleryName}
         &image_type=photo&orientation=horizontal
-        &per_page=${this.props.per_page}
-        &page=${this.props.page}`
+        &per_page=${per_page}
+        &page=${page}`
       )
         .then(responce => responce.json())
         .then(gallery => {
           if (gallery.totalHits === 0) {
             Notiflix.Notify.failure('Gallery not found');
-            this.props.onBtnLoadMore(false);
-          } else this.props.onBtnLoadMore(true);
+            onBtnLoadMore(false);
+            setGalleryImage([]);
+          } else {
+            onBtnLoadMore(true);
+          }
 
-          this.setState(prevState => ({
-            galleryImage: prevState.galleryImage.concat(gallery.hits),
-            totalHits: gallery.totalHits,
-            error: false,
-          }));
-          // console.log(this.state.galleryImage.length, this.state.totalHits);
-          // if (this.state.galleryImage.length === this.state.totalHits) {
-          //   this.props.onBtnLoadMore(false);
-          // }
+          setGalleryImage(prev => prev.concat(gallery.hits));
+
+          setTotalHits(gallery.totalHits);
         })
-        .catch(error => this.setState({ error: true }))
+        .catch(error => setError(true))
         .finally(() => {
-          this.setState({ loading: false });
+          setLoading(false);
         });
-    }
+    } else setGalleryImage([]);
+  }, [page, galleryName]);
+
+  if (galleryImage.length === totalHits && page > 1) {
+    onBtnLoadMore(false);
   }
 
-  handlModal = urlLargImage => {
-    this.props.urlLargeImage(urlLargImage);
+  const handlModal = urlLargImage => {
+    urlLargeImage(urlLargImage);
   };
 
-  render() {
-    const images = this.state.galleryImage;
+  const images = galleryImage;
 
-    return (
-      <div>
-        <Gallery>
-          {images &&
-            images.map(image => {
-              return (
-                <div key={image.id}>
-                  <ImageGalleryItem
-                    imageReview={image.webformatURL}
-                    largeImage={image.largeImageURL}
-                    altImage={image.tags}
-                    onModal={this.handlModal}
-                  />
-                </div>
-              );
-            })}
-        </Gallery>
-        {this.state.loading && <Loader />}
-      </div>
-    );
-  }
+  return (
+    <div>
+      <Gallery>
+        {images &&
+          images.map(image => {
+            return (
+              <div key={image.id}>
+                <ImageGalleryItem
+                  imageReview={image.webformatURL}
+                  largeImage={image.largeImageURL}
+                  altImage={image.tags}
+                  onModal={handlModal}
+                />
+              </div>
+            );
+          })}
+      </Gallery>
+      {loading && <Loader />}
+    </div>
+  );
 }
 
 ImageGallery.propTypes = {
