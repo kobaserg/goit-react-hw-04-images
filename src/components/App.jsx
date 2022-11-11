@@ -7,7 +7,7 @@ import { Button } from './Button/Button';
 export function App() {
   const [searchGallery, setSearchGallery] = useState('');
   const [page, setPage] = useState(1);
-  const [per_page, setPer_page] = useState(12);
+  const [per_page] = useState(12);
   const [onModal, setOnModal] = useState(false);
   const [visibleBtnLoadMore, setVisibleBtnLoadMore] = useState(false);
   const [urlLargeImage, setUrlLargeImage] = useState('');
