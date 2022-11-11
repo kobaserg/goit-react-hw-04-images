@@ -44,7 +44,7 @@ export function ImageGallery(props) {
           setLoading(false);
         });
     } else setGalleryImage([]);
-  }, [page, galleryName, onBtnLoadMore]);
+  }, [page, galleryName]);
 
   if (galleryImages.length === totalHits && page > 1) {
     onBtnLoadMore(false);
@@ -80,4 +80,4 @@ ImageGallery.propTypes = {
   props: PropTypes.object,
 };
 
-// eslint-disable-next-line
+// ----------eslint - disable - next - line;--------->>>>>
