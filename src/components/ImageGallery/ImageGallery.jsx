@@ -12,16 +12,24 @@ const API_KEY = '29969800-031613b21cddc77cf547ed849';
 export function ImageGallery(props) {
   const [galleryImages, setGalleryImage] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [totalHits, setTotalHits] = useState(0);
+  // const [totalHits, setTotalHits] = useState(0);
   const [page, setPage] = useState(1);
   const [btnLoadMore, setBtnLoadMore] = useState(false);
 
   const { galleryName, urlLargeImage } = props;
 
   useEffect(() => {
+    setPage(1);
+    setGalleryImage([]);
+  }, [galleryName]);
+
+  // console.log('PAGE -->', page);
+
+  useEffect(() => {
     if (page === 1) setGalleryImage([]);
     if (galleryName !== '') {
       setLoading(true);
+      console.log('PAGE -->', page);
       fetch(
         `${URL}key=${API_KEY}&q=${galleryName}
         &image_type=photo&orientation=horizontal
@@ -37,10 +45,8 @@ export function ImageGallery(props) {
           } else {
             setBtnLoadMore(true);
           }
-
+          // setTotalHits(gallery.totalHits);
           setGalleryImage(prev => prev.concat(gallery.hits));
-
-          setTotalHits(gallery.totalHits);
         })
         .catch(error => console.log('ERROR---ERROR'))
         .finally(() => {
@@ -48,10 +54,6 @@ export function ImageGallery(props) {
         });
     } else setGalleryImage([]);
   }, [page, galleryName]);
-
-  // if (galleryImages.length === totalHits && page > 1) {
-  //   setBtnLoadMore(false);
-  // }
 
   const handlModal = urlLargImage => {
     urlLargeImage(urlLargImage);
