@@ -8,7 +8,7 @@ export const Modal = props => {
       props.closeModal();
     }
   };
-
+  console.log(props.urlModal);
   return (
     <Overlay onClick={handlCloseModal}>
       <Mod>

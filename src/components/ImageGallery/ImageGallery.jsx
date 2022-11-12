@@ -4,6 +4,7 @@ import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
 import { Loader } from '../Loader/Loader';
 import Notiflix from 'notiflix';
 import { Gallery } from './ImageGallery.styled';
+import { Button } from '../Button/Button';
 
 const URL = 'https://pixabay.com/api/?';
 const API_KEY = '29969800-031613b21cddc77cf547ed849';
@@ -12,8 +13,10 @@ export function ImageGallery(props) {
   const [galleryImages, setGalleryImage] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalHits, setTotalHits] = useState(0);
+  const [page, setPage] = useState(1);
+  const [btnLoadMore, setBtnLoadMore] = useState(false);
 
-  const { galleryName, page, onBtnLoadMore, urlLargeImage } = props;
+  const { galleryName, urlLargeImage } = props;
 
   useEffect(() => {
     if (page === 1) setGalleryImage([]);
@@ -29,10 +32,10 @@ export function ImageGallery(props) {
         .then(gallery => {
           if (gallery.totalHits === 0) {
             Notiflix.Notify.failure('Gallery not found');
-            onBtnLoadMore(false);
+            setBtnLoadMore(false);
             setGalleryImage([]);
           } else {
-            onBtnLoadMore(true);
+            setBtnLoadMore(true);
           }
 
           setGalleryImage(prev => prev.concat(gallery.hits));
@@ -46,12 +49,16 @@ export function ImageGallery(props) {
     } else setGalleryImage([]);
   }, [page, galleryName]);
 
-  if (galleryImages.length === totalHits && page > 1) {
-    onBtnLoadMore(false);
-  }
+  // if (galleryImages.length === totalHits && page > 1) {
+  //   setBtnLoadMore(false);
+  // }
 
   const handlModal = urlLargImage => {
     urlLargeImage(urlLargImage);
+  };
+
+  const onClickLoadMore = () => {
+    setPage(page => page + 1);
   };
 
   return (
@@ -71,6 +78,7 @@ export function ImageGallery(props) {
             );
           })}
       </Gallery>
+      {btnLoadMore && <Button onBtnLM={onClickLoadMore} />}
       {loading && <Loader />}
     </div>
   );
@@ -79,5 +87,3 @@ export function ImageGallery(props) {
 ImageGallery.propTypes = {
   props: PropTypes.object,
 };
-
-// ----------eslint - disable - next - line;--------->>>>>
