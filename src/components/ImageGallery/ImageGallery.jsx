@@ -4,70 +4,64 @@ import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
 import { Loader } from '../Loader/Loader';
 import Notiflix from 'notiflix';
 import { Gallery } from './ImageGallery.styled';
-import { Button } from '../Button/Button';
 
 const URL = 'https://pixabay.com/api/?';
 const API_KEY = '29969800-031613b21cddc77cf547ed849';
 
 export function ImageGallery(props) {
-  const [galleryImages, setGalleryImage] = useState([]);
+  const [galleryImage, setGalleryImage] = useState([]);
   const [loading, setLoading] = useState(false);
-  // const [totalHits, setTotalHits] = useState(0);
-  const [page, setPage] = useState(1);
-  const [btnLoadMore, setBtnLoadMore] = useState(false);
+  const [totalHits, setTotalHits] = useState(0);
 
-  const { galleryName, urlLargeImage } = props;
-
-  useEffect(() => {
-    setPage(1);
-    setGalleryImage([]);
-  }, [galleryName]);
-
-  // console.log('PAGE -->', page);
+  const { galleryName, page, per_page, onBtnLoadMore, urlLargeImage } = props;
 
   useEffect(() => {
     if (page === 1) setGalleryImage([]);
     if (galleryName !== '') {
       setLoading(true);
-      console.log('PAGE -->', page);
       fetch(
         `${URL}key=${API_KEY}&q=${galleryName}
         &image_type=photo&orientation=horizontal
-        &per_page=${12}
+        &per_page=${per_page}
         &page=${page}`
       )
         .then(responce => responce.json())
         .then(gallery => {
           if (gallery.totalHits === 0) {
             Notiflix.Notify.failure('Gallery not found');
-            setBtnLoadMore(false);
+            onBtnLoadMore(false);
             setGalleryImage([]);
           } else {
-            setBtnLoadMore(true);
+            onBtnLoadMore(true);
           }
-          // setTotalHits(gallery.totalHits);
+
           setGalleryImage(prev => prev.concat(gallery.hits));
+
+          setTotalHits(gallery.totalHits);
         })
-        .catch(error => console.log('ERROR---ERROR'))
+        .catch(error => console.log('ERROR'))
         .finally(() => {
           setLoading(false);
         });
     } else setGalleryImage([]);
+    // eslint-disable-next-line
   }, [page, galleryName]);
+
+  if (galleryImage.length === totalHits && page > 1) {
+    onBtnLoadMore(false);
+  }
 
   const handlModal = urlLargImage => {
     urlLargeImage(urlLargImage);
   };
 
-  const onClickLoadMore = () => {
-    setPage(page => page + 1);
-  };
+  const images = galleryImage;
 
   return (
     <div>
       <Gallery>
-        {galleryImages &&
-          galleryImages.map(image => {
+        {images &&
+          images.map(image => {
             return (
               <div key={image.id}>
                 <ImageGalleryItem
@@ -80,7 +74,6 @@ export function ImageGallery(props) {
             );
           })}
       </Gallery>
-      {btnLoadMore && <Button onBtnLM={onClickLoadMore} />}
       {loading && <Loader />}
     </div>
   );
