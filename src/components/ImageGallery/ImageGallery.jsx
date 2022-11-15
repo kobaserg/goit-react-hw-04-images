@@ -29,7 +29,9 @@ export function ImageGallery(props) {
         .then(gallery => {
           if (gallery.totalHits === 0) {
             Notiflix.Notify.failure('Gallery not found');
+
             onBtnLoadMore(false);
+
             setGalleryImage([]);
           } else {
             onBtnLoadMore(true);
@@ -44,8 +46,7 @@ export function ImageGallery(props) {
           setLoading(false);
         });
     } else setGalleryImage([]);
-    // eslint-disable-next-line
-  }, [page, galleryName]);
+  }, [page, galleryName, per_page, onBtnLoadMore]);
 
   if (galleryImage.length === totalHits && page > 1) {
     onBtnLoadMore(false);
@@ -82,3 +83,5 @@ export function ImageGallery(props) {
 ImageGallery.propTypes = {
   props: PropTypes.object,
 };
+
+// eslint-disable-next-line

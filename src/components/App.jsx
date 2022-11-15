@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Modal } from './Modal/Modal';
@@ -35,9 +35,9 @@ export function App() {
     });
   };
 
-  const btnLoadMore = btnLM => {
-    setVisibleBtnLoadMore(btnLM);
-  };
+  const btnLoadMore = useCallback(btn => {
+    setVisibleBtnLoadMore(btn);
+  }, []);
 
   const onClickLoadMore = () => {
     setPage(page => page + 1);
